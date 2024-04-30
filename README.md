@@ -1,0 +1,2 @@
+# kotodama
+Japanese conversion utilities
