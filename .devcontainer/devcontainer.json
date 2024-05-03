@@ -1,0 +1,22 @@
+{
+  "name": "Kotodama Composer Library Development",
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "..",
+    "args": {
+      "VARIANT": "8.3",
+      "COMPOSER_VERSION": "latest"
+    }
+  },
+  "settings": {
+    "terminal.integrated.shell.linux": "/bin/bash"
+  },
+  "extensions": [
+    "felixfbecker.php-debug",
+    "bmewburn.vscode-intelephense-client"
+  ],
+  "forwardPorts": [
+    9003
+  ],
+  "postCreateCommand": "composer install",
+}

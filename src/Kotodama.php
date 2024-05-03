@@ -2,6 +2,8 @@
 
 namespace Kotodama;
 
+use PDO;
+
 class Kotodama
 {
     protected $hiraganaRomaji = [
@@ -141,5 +143,47 @@ class Kotodama
             $result .= isset($romajiData[$char]) ? $romajiData[$char] : $char;
         }
         return $result;
+    }
+    
+    public function romajiToHiragana($romaji)
+    {
+        $connection = new SQLiteConnection();
+        $pdo = $connection->getConnection();
+
+        $stmt = $pdo->query("SELECT romaji, hiragana FROM mapping");
+        $map = [];
+        while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+            $map[$row['romaji']] = $row['hiragana'];
+        }
+        // 接続のクローズ
+        $connection->closeConnection();
+
+        uksort($map, function($a, $b) {
+            return mb_strlen($b) - mb_strlen($a);
+        });
+
+        $result = '';
+        $len = mb_strlen($romaji);
+        $i = 0;
+        while ($i < $len) {
+            $matched = false;
+            foreach ($map as $key => $value) {
+                if (substr($romaji, $i, mb_strlen($key)) == $key) {
+                    $result .= $value;
+                    $i += mb_strlen($key);
+                    $matched = true;
+                    break;
+                }
+            }
+            if (!$matched) {
+                $result .= $romaji[$i];
+                $i++;
+            }
+        }
+        return $result;
+    }
+    
+    public function fetchMapping()
+    {
     }
 }
